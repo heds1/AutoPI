@@ -1,0 +1,6 @@
+## Interface: 11306
+## Title: AutoPI
+## Notes: Automatically cast Power Infusion when whispered.
+## Authod: heds1
+## Version: 0.1
+AutoPI.lua
