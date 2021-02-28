@@ -43,3 +43,32 @@ f:SetScript("OnEvent", function(self, event, ...)
         end
     end
 end)
+
+-- note: open key bindings, go to 'other' category, and bind
+-- power infusion to a key.
+
+
+-- create (invisible) frame for PI. this is bound in bindings.xml
+local pi = CreateFrame("Button", "PowerInfusion", UIParent,
+    "SecureActionButtonTemplate");
+-- cast power infusion on the mouseover'd target
+pi:SetAttribute("type", "spell");
+pi:SetAttribute("spell", "Power Infusion", "mouseover");
+
+-- check whether cast was successful, and if so, notify target
+pi:RegisterEvent("UNIT_SPELLCAST_SENT");
+pi:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED");
+pi:SetScript("OnEvent", function(self, event, ...)
+    if event == "UNIT_SPELLCAST_SENT" then
+        -- get targeted player
+        local unit, target = ...
+        -- have to make this global to pass to next event??
+        -- seems bizarre scoping
+        pi_target = target
+        print("Target: "..pi_target)
+    end
+    if event == "UNIT_SPELLCAST_SUCCEEDED" then
+        SendChatMessage("Power infusion cast on you.",
+            "WHISPER", "Common", pi_target) 
+    end
+end)

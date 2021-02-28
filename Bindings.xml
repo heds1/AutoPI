@@ -1,0 +1,3 @@
+<Bindings>
+ <Binding name="CLICK PowerInfusion:LeftButton" header="AutoPI" description="Power Infusion" />
+</Bindings>
