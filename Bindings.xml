@@ -1,3 +1,4 @@
 <Bindings>
  <Binding name="CLICK PowerInfusion:LeftButton" header="AutoPI" description="Power Infusion" />
+ <Binding name="CLICK FearWard:LeftButton" header="AutoPI" description="Fear Ward" />
 </Bindings>

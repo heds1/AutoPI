@@ -47,7 +47,6 @@ end)
 -- note: open key bindings, go to 'other' category, and bind
 -- power infusion to a key.
 
-
 -- create (invisible) frame for PI. this is bound in bindings.xml
 local pi = CreateFrame("Button", "PowerInfusion", UIParent,
     "SecureActionButtonTemplate");
@@ -59,16 +58,48 @@ pi:SetAttribute("spell", "Power Infusion", "mouseover");
 pi:RegisterEvent("UNIT_SPELLCAST_SENT");
 pi:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED");
 pi:SetScript("OnEvent", function(self, event, ...)
+    -- we have to use this event to get targeted player,
+    -- because that's not provided in UNIT_SPELLCAST_SUCCEEDED.
     if event == "UNIT_SPELLCAST_SENT" then
-        -- get targeted player
+        -- for some reason we have to make this global, scoping is weird
         local unit, target = ...
-        -- have to make this global to pass to next event??
-        -- seems bizarre scoping
         pi_target = target
-        print("Target: "..pi_target)
     end
     if event == "UNIT_SPELLCAST_SUCCEEDED" then
-        SendChatMessage("Power infusion cast on you.",
-            "WHISPER", "Common", pi_target) 
+        local unit, castGUID, spellID = ...
+        local name = UnitName("player")
+        -- check for PI spell ID, and don't send msg to yourself
+        if (spellID == 10060 and pi_target ~= name) then
+            SendChatMessage("Power Infusion cast on you.",
+                "WHISPER", "Common", pi_target) 
+        end
+       
+    end
+end)
+
+
+-- do the same for FW :)
+local fw = CreateFrame("Button", "FearWard", UIParent,
+    "SecureActionButtonTemplate");
+fw:SetAttribute("type", "spell");
+fw:SetAttribute("spell", "Fear Ward", "mouseover");
+fw:RegisterEvent("UNIT_SPELLCAST_SENT");
+fw:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED");
+
+local name, rank, icon, castTime, minRange, maxRange, spellId = GetSpellInfo("Fear Ward")
+print(spellId)
+fw:SetScript("OnEvent", function(self, event, ...)
+    if event == "UNIT_SPELLCAST_SENT" then
+        local unit, target = ...
+        fw_target = target        
+    end
+    if event == "UNIT_SPELLCAST_SUCCEEDED" then
+        local unit, castGUID, spellID = ...
+        local name = UnitName("player")
+        if (spellID == 6346 and fw_target ~= name) then
+            SendChatMessage("Fear Ward cast on you.",
+                "WHISPER", "Common", fw_target) 
+        end
+       
     end
 end)
